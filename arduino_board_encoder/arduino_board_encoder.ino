@@ -1,12 +1,9 @@
-/*Arduino Parrallax Effect Board*/
-#define EncoderPinA 2
-#define EncoderPinB 3
-#define EncoderInterrupt 0
-
-#define LED 13
-
 const int buttonLeft = 4;
 const int buttonRight = 5;
+const int EncoderPinA = 2;
+const int EncoderPinB = 3;
+const int EncoderInterrupt = 0;
+const int LED = 13;
 volatile int buttonState = 0;
 volatile int _encoderTicks = 0;
 
