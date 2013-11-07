@@ -1,3 +1,5 @@
+#include <Bounce.h>
+
 const int buttonLeft = 4;       // Switch Left
 const int buttonRight = 5;      // Switch right
 const int EncoderPinA = 2;      // knob turn left
@@ -5,8 +7,13 @@ const int EncoderPinB = 3;      // knob turn right
 const int EncoderInterrupt = 0; // interrupt feature, might replace with polling tech
 const int LED = 13;             // standard LED pin
 volatile int buttonState = 0;   //state of button
-volatile int lastButtonState = LOW; // previous reading
 volatile int _encoderTicks = 0;
+
+//Software Debouncers
+Bounce debounceBLeft = Bounce(buttonLeft, 5);   // 5 milliseconds delay
+Bounce debounceBRight = Bounce(buttonRight, 5);
+Bounce debounceEPinA = Bounce(EncoderPinA, 5);
+Bounce debounceEPinB = Bounce(EncoderPinB, 5);
 
 void setup() { 
   Serial.begin(9600);
@@ -19,25 +26,19 @@ void setup() {
 }
 
 void loop() { 
-  int reading = digitalRead(buttonLeft);
-  
-  if (reading != lastButtonState) { 
-    lastDebounceTime = millis(); //resets the timer because the state has changed 
-  }
-  
-  if((millis() - lastDebounceTime) > debounceDelay) { 
+  debounceBLeft.update();  //update debouncers
+  debounceBRight.update();
+  debounceEPinA.update();
+  debounceEPinB.update();
     
-    if (reading == HIGH) { 
+  if (debounceBLeft.read() == HIGH) { 
       //output
       Keyboard.begin();
       Keyboard.press(KEY_PAGE_UP);
       Keyboard.releaseAll();
-    } 
-  }
+  } 
   
-  reading = digitalRead(buttonRight);
-  
-  if (buttonState == HIGH) { 
+  if (debounceBRight.read() == HIGH) { 
     //output  
     Keyboard.begin();
     Keyboard.press(KEY_PAGE_DOWN);
