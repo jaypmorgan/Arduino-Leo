@@ -10,8 +10,8 @@ volatile int buttonState = 0;   //state of button
 volatile int _encoderTicks = 0;
 
 //Software Debouncers
-Bounce debounceBLeft = Bounce(buttonLeft, 5);   // 5 milliseconds delay
-Bounce debounceBRight = Bounce(buttonRight, 5);
+Bounce debounceBLeft = Bounce(buttonLeft, 1);   // 1 milliseconds delay, good switches
+Bounce debounceBRight = Bounce(buttonRight, 1);
 Bounce debounceEPinA = Bounce(EncoderPinA, 5);
 Bounce debounceEPinB = Bounce(EncoderPinB, 5);
 
