@@ -5,6 +5,10 @@ const int buttonRight = 5;      // Switch right
 const int EncoderPinA = 2;      // knob turn left
 const int EncoderPinB = 3;      // knob turn right
 const int EncoderInterrupt = 0; // interrupt feature, might replace with polling tech
+const int redLED = 7; 
+const int greLED = 8; 
+const int bluLED = 9;
+const int SW = 10; 
 const int LED = 13;             // standard LED pin
 volatile int buttonState = 0;   //state of button
 volatile int _encoderTicks = 0;
@@ -12,8 +16,7 @@ volatile int _encoderTicks = 0;
 //Software Debouncers
 Bounce debounceBLeft = Bounce(buttonLeft, 1);   // 1 milliseconds delay, good switches
 Bounce debounceBRight = Bounce(buttonRight, 1);
-Bounce debounceEPinA = Bounce(EncoderPinA, 5);
-Bounce debounceEPinB = Bounce(EncoderPinB, 5);
+Bounce pushSwitch = Bounce(SW, 5);
 
 void setup() { 
   Serial.begin(9600);
@@ -21,40 +24,63 @@ void setup() {
     pinMode(EncoderPinB, INPUT);
     pinMode(buttonLeft, INPUT);
     pinMode(buttonRight, INPUT);
-    
+    pinMode(SW, INPUT);
+   
     attachInterrupt(EncoderInterrupt, HandleEncoderInterrupt, CHANGE); //add interrupt for any change in pins
 }
 
-void loop() { 
+void loop() {
   debounceBLeft.update();  //update debouncers
   debounceBRight.update();
-  debounceEPinA.update();
-  debounceEPinB.update();
-    
-  if (debounceBLeft.read() == HIGH) { 
+  pushSwitch.update(); 
+  
+  if (debounceBLeft.read() == LOW) { 
       //output
       Keyboard.begin();
-      Keyboard.press(KEY_PAGE_UP);
+      Keyboard.press(218); // up arrow
       Keyboard.releaseAll();
   } 
   
-  if (debounceBRight.read() == HIGH) { 
+  if (debounceBRight.read() == LOW) { 
     //output  
     Keyboard.begin();
-    Keyboard.press(KEY_PAGE_DOWN);
+    Keyboard.press(217); // down arrow
     Keyboard.releaseAll();
   }
   
-  analogWrite(LED, _encoderTicks);
-  Serial.write(_encoderTicks);
+  if (pushSwitch.read() == HIGH) {
+    Keyboard.begin();
+    Keyboard.press(211); // page up
+    Keyboard.releaseAll();
+    analogWrite(greLED, HIGH); 
+  }
+  
   delay(10);
 }
     
     
 void HandleEncoderInterrupt() { 
-  //if pin is 2 then state left if pin is more than 2 (3) then state is right
-  _encoderTicks += ((PIND >> 1) & 0x1) ? -1 : +1;
-  if(_encoderTicks < 0 ) _encoderTicks = 255;
-  if(_encoderTicks > 255 ) _encoderTicks = 0;
- 
+  _encoderTicks = ((PIND >> 1) & 0x1) ? 1 : 2 ;
+  
+  if (_encoderTicks != 2) { 
+     turnLeft(); 
+  } else if (_encoderTicks != 1) { 
+     turnRight(); 
+  }
+  
+  _encoderTicks = 0;
+}
+
+void turnLeft() { 
+      Keyboard.begin();
+      Keyboard.press(216);
+      Keyboard.releaseAll();
+      analogWrite(redLED, 1); 
+}
+
+void turnRight() { 
+   Keyboard.begin();
+      Keyboard.press(215);
+      Keyboard.releaseAll(); 
+      analogWrite(bluLED, 1);
 }
