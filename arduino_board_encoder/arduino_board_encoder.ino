@@ -1,7 +1,9 @@
 #include <Bounce.h>
 
-const int buttonLeft = 4;       // Switch Left
-const int buttonRight = 5;      // Switch right
+const int buttonRight = 4;       // Switch Left
+const int buttonLeft = 5;      // Switch right
+const int buttonUp = 12;
+const int buttonDown = 11;
 const int EncoderPinA = 2;      // knob turn left
 const int EncoderPinB = 3;      // knob turn right
 const int EncoderInterrupt = 0; // interrupt feature, might replace with polling tech
@@ -16,6 +18,8 @@ volatile int _encoderTicks = 0;
 //Software Debouncers
 Bounce debounceBLeft = Bounce(buttonLeft, 1);   // 1 milliseconds delay, good switches
 Bounce debounceBRight = Bounce(buttonRight, 1);
+Bounce debounceBUp = Bounce(buttonUp, 1);   // 1 milliseconds delay, good switches
+Bounce debounceBDown = Bounce(buttonDown, 1);
 Bounce pushSwitch = Bounce(SW, 5);
 
 void setup() { 
@@ -26,7 +30,7 @@ void setup() {
     pinMode(buttonRight, INPUT);
     pinMode(SW, INPUT);
    
-    attachInterrupt(EncoderInterrupt, HandleEncoderInterrupt, CHANGE); //add interrupt for any change in pins
+    //attachInterrupt(EncoderInterrupt, HandleEncoderInterrupt, CHANGE); //add interrupt for any change in pins
 }
 
 void loop() {
@@ -37,11 +41,25 @@ void loop() {
   if (debounceBLeft.read() == LOW) { 
       //output
       Keyboard.begin();
-      Keyboard.press(218); // up arrow
+      Keyboard.press(216); // left arrow
       Keyboard.releaseAll();
   } 
   
   if (debounceBRight.read() == LOW) { 
+    //output  
+    Keyboard.begin();
+    Keyboard.press(215); // right arrow
+    Keyboard.releaseAll();
+  }
+  
+  if (debounceBUp.read() == LOW) { 
+      //output
+      Keyboard.begin();
+      Keyboard.press(218); // up arrow
+      Keyboard.releaseAll();
+  } 
+  
+  if (debounceBDown.read() == LOW) { 
     //output  
     Keyboard.begin();
     Keyboard.press(217); // down arrow
@@ -50,9 +68,19 @@ void loop() {
   
   if (pushSwitch.read() == HIGH) {
     Keyboard.begin();
-    Keyboard.press(211); // page up
+    Keyboard.press(32); // page up
     Keyboard.releaseAll();
     analogWrite(greLED, HIGH); 
+  }
+  
+  
+  
+  if (digitalRead(EncoderPinA) == LOW) { 
+     turnRight(); 
+  } 
+  
+  if (digitalRead(EncoderPinB) == LOW) { 
+     turnLeft(); 
   }
   
   delay(10);
@@ -60,15 +88,9 @@ void loop() {
     
     
 void HandleEncoderInterrupt() { 
-  _encoderTicks = ((PIND >> 1) & 0x1) ? 1 : 2 ;
+  //_encoderTicks = ((PIND >> 1) & 0x1) ? 1 : 2 ;
   
-  if (_encoderTicks != 2) { 
-     turnLeft(); 
-  } else if (_encoderTicks != 1) { 
-     turnRight(); 
-  }
-  
-  _encoderTicks = 0;
+  //_encoderTicks = 0;
 }
 
 void turnLeft() { 
