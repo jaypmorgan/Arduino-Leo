@@ -1,18 +1,18 @@
 #include <Bounce.h>
 
-const int buttonRight = 4;       // Switch Left
-const int buttonLeft = 5;      // Switch right
-const int buttonUp = 12;
-const int buttonDown = 11;
-const int EncoderPinA = 2;      // knob turn left
-const int EncoderPinB = 3;      // knob turn right
-const int EncoderInterrupt = 0; // interrupt feature, might replace with polling tech
+const int buttonRight = 4;       // Push Switch Left
+const int buttonLeft = 5;        // Push Switch right
+const int buttonUp = 12;         // Push Switch Up
+const int buttonDown = 11;       // Push Switch Down
+const int EncoderPinA = 2;       // knob turn left
+const int EncoderPinB = 3;       // knob turn right
+const int EncoderInterrupt = 0;  // interrupt feature, might replace with polling tech
 const int redLED = 7; 
 const int greLED = 8; 
 const int bluLED = 9;
-const int SW = 10; 
-const int LED = 13;             // standard LED pin
-volatile int buttonState = 0;   //state of button
+const int SW = 10;               // push down feature on the rotary encoder
+const int LED = 13;              // standard LED pin
+volatile int buttonState = 0;    // state of button
 volatile int _encoderTicks = 0;
 
 //Software Debouncers
